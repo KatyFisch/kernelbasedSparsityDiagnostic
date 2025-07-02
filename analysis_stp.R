@@ -1,22 +1,19 @@
 library(simcausal)
 library(lmtp)
 library(SuperLearner)
-library(randomForest)
 library(ggplot2)
-library(ltmle)
 library(CICI)
-#library(rJava)
-#library(bartMachine)
 library(patchwork)
-# setwd("C:\\Users\\Katharina Ring\\LRZ Sync+Share\\R_code\\CDRCs")
+library(cowplot)
+#install_github("ehkennedy/npcausal")
+library(npcausal)
+
 source("curvecalc_functions.R")
 source("plot_functions.R")
 source("pdf_functions_wdiagnostic.R")
 source("diagnostic_function.R")
-#install_github("ehkennedy/npcausal")
-library(npcausal)
-library(cowplot)
 
+#parallelization
 library(foreach)
 parallel::detectCores() #12
 n.cores <- parallel::detectCores() - 1
@@ -29,14 +26,13 @@ my.cluster <- parallel::makeCluster(
 doParallel::registerDoParallel(cl = my.cluster)
 
 # general settings
-sl_lib <- c("SL.glm", "SL.gam", "SL.glmnet", "SL.earth") #, "SL.bartMachine", "SL.gbm"
-length_out <- 10 #50
-length_out_dia <- 5 #9
-n_datapoints <- 300 #350
+sl_lib <- c("SL.glm", "SL.gam", "SL.glmnet", "SL.earth")
+length_out <- 50 #50
+length_out_dia <- 9 #9
+n_datapoints <- 350 #350
 
 # polynomial linear
 y_func <- function(A.){ 
-  #A. <- A.*1.1
   result <- 1.1 - 23.29167*A. + 154.0625*A.**2 - 392.1875*A.**3 + 429.6875*A.**4 - 169.2708*A.**5
   if (A. <= 0.11){
     point <- 0.11
@@ -58,7 +54,6 @@ D.polynomial_linear <- DAG.empty() +
   node("A.",  distr = "rconst", const = A) +
   node("Y",  distr = "rnorm", mean = 0.2*L+y_func(A.), sd=0.05)
 
-source("pdf_functions_wdiagnostic.R")
 make_pdfs_stp(sl_lib = sl_lib,
               D.base = D.polynomial_linear,
               doses = seq(0, 1, length.out = length_out),
@@ -85,34 +80,6 @@ make_pdfs_stp(sl_lib = sl_lib,
               length_out_dia = length_out_dia, 
               n = n_datapoints
 )
-if (F){
-  sl_lib = sl_lib
-  D.base = D.polynomial_linear
-  doses = seq(0, 1, length.out = length_out)
-  kennedy_search = seq(.015, 0.1, length.out = length_out)
-  shifts_det_lpv = seq(-0.3, 0.3, length.out = length_out)
-  shifts_sto_lpv = seq(-0.3, 0.3, length.out = length_out)
-  shifts_det_d_lpv = seq(-0.3, 0.3, length.out = length_out)
-  shifts_sto_d_lpv = seq(-0.3, 0.3, length.out = length_out)  
-  thresholds_lpv = seq(0, 1, length.out = length_out) 
-  shifts_detsh_lpv = seq(-0.8, 0.8, length.out = length_out)
-  shifts_det_mpv = seq(-0.3, 0.3, length.out = length_out)
-  shifts_sto_mpv = seq(-0.3, 0.3, length.out = length_out)
-  shifts_det_d_mpv = seq(-0.3, 0.3, length.out = length_out)  
-  shifts_sto_d_mpv = seq(-0.3, 0.3, length.out = length_out) 
-  thresholds_mpv = seq(0, 1, length.out = length_out)
-  shifts_detsh_mpv = seq(-0.5, 0.5, length.out = length_out) 
-  shifts_det_spv = seq(-0.3, 0.3, length.out = length_out)
-  shifts_sto_spv = seq(-0.3, 0.3, length.out = length_out) 
-  shifts_det_d_spv = seq(-0.3, 0.3, length.out = length_out)  
-  shifts_sto_d_spv = seq(-0.3, 0.3, length.out = length_out) 
-  thresholds_spv = seq(0, 1, length.out = length_out) 
-  shifts_detsh_spv = seq(-0.4, 0.4, length.out = length_out)  
-  descr_str = "polynomial-linear"
-  length_out_dia = length_out_dia
-  n = n_datapoints
-}
-
 
 # polynomial
 D.polynomial <- DAG.empty() + 
@@ -146,7 +113,6 @@ make_pdfs_stp(sl_lib = sl_lib,
               descr_str = "polynomial", 
               length_out_dia = length_out_dia, 
               n = n_datapoints)
-
 
 
 # linear piece 2
@@ -215,7 +181,7 @@ make_pdfs_stp(sl_lib = sl_lib,
 
 
 
-if(FALSE){
+if(TRUE){
   # linear
   D.linear <- DAG.empty() + 
     node("L", distr = "rbern", prob = 0.3) +

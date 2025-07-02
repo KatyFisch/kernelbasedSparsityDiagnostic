@@ -5,7 +5,7 @@ make_pdfs_stp <- function(sl_lib, D.base, doses, kennedy_search, shifts_det_lpv,
                           shifts_detsh_mpv, shifts_det_spv, shifts_sto_spv, 
                           shifts_det_d_spv, shifts_sto_d_spv, thresholds_spv, 
                           shifts_detsh_spv, descr_str, length_out_dia, n, 
-                          disthalf_vec=c(A = 0.15)
+                          disthalf_vec=c(A = 0.15, L=0.5)
                           ){
   ####################################################
   # little positivity violation
@@ -38,7 +38,7 @@ make_pdfs_stp <- function(sl_lib, D.base, doses, kennedy_search, shifts_det_lpv,
     data["A"] <- param
     return(data)
   }
-  disthalf_vec <- c(A = 0.5*sd(Odat$A))
+  #disthalf_vec <- c(A = 0.5*sd(Odat$A))
   gg_drc_lpv_dia <- my_diagnostic(int_func=drc_intervention, int_func_param=dia_range(doses, length_out_dia_cdrc),
                                   data=Odat, disthalf_vec=disthalf_vec, col="black")
   gg_drc_lpv_noest <- plot_drc_no_estimation(dat_drc, Odat)
@@ -148,7 +148,7 @@ make_pdfs_stp <- function(sl_lib, D.base, doses, kennedy_search, shifts_det_lpv,
   Dset <- simcausal::set.DAG(D.base)
   # get data for plotting
   Odat <- simcausal::sim(DAG = Dset, n = n, rndseed = 1, verbose=F)
-  disthalf_vec$A <- 0.5*sd(Odat$A)
+  #disthalf_vec <- c(A = 0.5*sd(Odat$A))
 
   ## dose-response curve with CICI
   dat_drc <- get_drc(doses, Dset, Odat)
@@ -237,20 +237,6 @@ make_pdfs_stp <- function(sl_lib, D.base, doses, kennedy_search, shifts_det_lpv,
   ggsave(paste('figures/', descr_str, '_medium.pdf', sep=''), gg_full, device="pdf", width = 12, height = 6)
   dev.off()
   
-  # ### poster plot
-  # layout <- "
-  # AACE
-  # BBDF
-  # "
-  # gg_full <- wrap_elements(full = gg_drc_mpv) + wrap_elements(full = gg_drc_mpv_dia) +
-  #   add_double_legend(gg_src_mpv, dat_src_sto) + gg_src_mpv_dia +
-  #   gg_src_th_mpv + gg_src_th_mpv_dia +
-  #   plot_layout(design = layout)
-  # gg_full <- gg_full + plot_annotation(title=" ",
-  #                                      theme = theme(plot.title = element_text(size = 18)))
-  # pdf()
-  # ggsave(paste('figures/', descr_str, '_posterplot_medium.pdf', sep=''), gg_full, device="pdf", width = 16, height = 7)
-  # dev.off()
 
   ####################################################
   # strong positivity violation
@@ -261,7 +247,7 @@ make_pdfs_stp <- function(sl_lib, D.base, doses, kennedy_search, shifts_det_lpv,
   Dset <- simcausal::set.DAG(D.base)
   # get data for plotting
   Odat <- simcausal::sim(DAG = Dset, n = n, rndseed = 1, verbose=F)
-  disthalf_vec$A <- 0.5*sd(Odat$A)
+  #disthalf_vec <- c(A = 0.5*sd(Odat$A))
   
   
   ## dose-response curve with CICI
