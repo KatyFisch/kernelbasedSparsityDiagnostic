@@ -116,7 +116,7 @@ add_double_legend <- function(plot, dat_src_sto){
     guides(linetype = guide_legend(order = 1, override.aes = list(color = c('azure4', 'azure4'))),
            color = guide_legend(order = 2)) + 
     theme(legend.position = "top", legend.direction = "vertical", legend.box = "horizontal",
-          legend.margin = margin(-1.9,-0.1,0.2,-0.1, unit="cm"))
+          legend.margin = ggplot2::margin(-1.9,-0.1,0.2,-0.1, unit="cm"))
 
   p2 <- my_get_legend(src_plot) 
   
@@ -137,7 +137,7 @@ add_single_legend <- function(plot, dat_src_detth){
     ggtitle("relative threshold RC") +
     scale_linetype_manual("", breaks = c("truth", "estimate"), values = c("solid", "dashed")) + 
     theme(legend.position = c(0.65,0.5), legend.direction = "vertical", legend.box = "horizontal",
-          legend.margin = margin(-1.9,-0.1,0.2,-0.1, unit="cm"))
+          legend.margin = ggplot2::margin(-1.9,-0.1,0.2,-0.1, unit="cm"))
   
   p2 <- my_get_legend(thresh_plot) 
   

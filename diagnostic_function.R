@@ -75,7 +75,7 @@ o <- function(x) {
 
 # the diagnostic
 my_diagnostic <- function(int_func, int_func_param, data, disthalf_vec, col="darkgreen", type="Rfast",
-                          minval_vec=NA, kernel="rbf.normal"){
+                          minval_vec=NA, kernel="rbf.normal", plot.out=TRUE){
   
   if (kernel=="rbf.normal"){
     kernel_used <- rbf.normal
@@ -117,6 +117,10 @@ my_diagnostic <- function(int_func, int_func_param, data, disthalf_vec, col="dar
     #dia <- apply(data_intervened, 1, function(x){singlediagnostic(data, x, disthalf_vec, kernel=rbf.normal)})
     new_data <- data.frame(shift= rep(param, length(dia)), diagnostic=unname(dia), observation=1:length(dia) )
     result_df <- rbind(result_df, new_data)
+  }
+  
+  if (!plot.out){
+    return(result_df)
   }
   
   result_plot <- ggplot(result_df, color=col, aes(x=shift, y=diagnostic, group=shift)) + 

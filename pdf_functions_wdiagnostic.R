@@ -5,7 +5,7 @@ make_pdfs_stp <- function(sl_lib, D.base, doses, kennedy_search, shifts_det_lpv,
                           shifts_detsh_mpv, shifts_det_spv, shifts_sto_spv, 
                           shifts_det_d_spv, shifts_sto_d_spv, thresholds_spv, 
                           shifts_detsh_spv, descr_str, length_out_dia, n, 
-                          disthalf_vec=c(A = 0.15, L=0.5)
+                          disthalf_vec=c(A = 0.15, L=0.000001)
                           ){
   ####################################################
   # little positivity violation
